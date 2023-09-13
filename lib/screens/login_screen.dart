@@ -48,6 +48,9 @@ class _LoginScreenState extends State<LoginScreen> {
                         decoration: InputDecoration(
                             hintText: "Enter Email",
                             label: const Text('Email'),
+                            errorText: snapshot.hasError
+                                ? snapshot.error.toString()
+                                : null,
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(20),
                             )),
@@ -66,6 +69,9 @@ class _LoginScreenState extends State<LoginScreen> {
                         decoration: InputDecoration(
                           hintText: "Enter Password",
                           label: const Text('Password'),
+                          errorText: snapshot.hasError
+                              ? snapshot.error.toString()
+                              : null,
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(20),
                           ),
@@ -114,27 +120,36 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Widget _buildButton() {
-    return GestureDetector(
-      onTap: () {
-        //login here
-      },
-      child: Container(
-        alignment: Alignment.center,
-        height: 40,
-        width: 120,
-        decoration: BoxDecoration(
-          color: const Color(0xffff69b4),
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: const Text(
-          'Login',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 23,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      ),
-    );
+    final bloc = Provider.of<LoginBloc>(context, listen: false);
+    return StreamBuilder<Object>(
+        stream: bloc.isValid,
+        builder: (context, snapshot) {
+          return GestureDetector(
+            onTap: snapshot.hasError || !snapshot.hasData
+                ? null
+                : () {
+                    bloc.submit();
+                  },
+            child: Container(
+              alignment: Alignment.center,
+              height: 40,
+              width: 120,
+              decoration: BoxDecoration(
+                color: snapshot.hasError || !snapshot.hasData
+                    ? Colors.grey
+                    : const Color(0xffff69b4),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: const Text(
+                'Login',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 23,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          );
+        });
   }
 }

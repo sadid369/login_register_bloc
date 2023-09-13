@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:login_register_bloc/bloc/login_bloc.dart';
+import 'package:login_register_bloc/bloc/register_bloc.dart';
 import 'package:login_register_bloc/screens/login_screen.dart';
 import 'package:provider/provider.dart';
 
@@ -17,6 +18,9 @@ class MyApp extends StatelessWidget {
       providers: [
         Provider<LoginBloc>(
           create: (context) => LoginBloc(),
+        ),
+        Provider<RegisterBloc>(
+          create: (context) => RegisterBloc(),
         ),
       ],
       child: MaterialApp(

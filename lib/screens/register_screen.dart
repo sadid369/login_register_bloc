@@ -2,7 +2,9 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
+import 'package:login_register_bloc/bloc/register_bloc.dart';
 import 'package:login_register_bloc/screens/login_screen.dart';
+import 'package:provider/provider.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -13,8 +15,10 @@ class RegisterScreen extends StatefulWidget {
 
 class _RegisterScreenState extends State<RegisterScreen> {
   GlobalKey _formState = GlobalKey<FormState>();
+  bool isVisible = true;
   @override
   Widget build(BuildContext context) {
+    final bloc = Provider.of<RegisterBloc>(context, listen: false);
     return Scaffold(
       body: Form(
         key: _formState,
@@ -36,67 +40,119 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 const SizedBox(
                   height: 30,
                 ),
-                TextField(
-                  keyboardType: TextInputType.emailAddress,
-                  decoration: InputDecoration(
-                      hintText: "Enter Email",
-                      label: const Text('Email'),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(20),
-                      )),
-                ),
+                StreamBuilder<String>(
+                    stream: bloc.email,
+                    builder: (context, snapshot) {
+                      return TextField(
+                        onChanged: (value) => bloc.changeEmail,
+                        keyboardType: TextInputType.emailAddress,
+                        decoration: InputDecoration(
+                            hintText: "Enter Email",
+                            label: const Text('Email'),
+                            errorText: snapshot.error.toString(),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(20),
+                            )),
+                      );
+                    }),
                 const SizedBox(
                   height: 30,
                 ),
-                TextField(
-                  keyboardType: TextInputType.text,
-                  decoration: InputDecoration(
-                      hintText: "Enter Name",
-                      label: const Text('Name'),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(20),
-                      )),
-                ),
+                StreamBuilder<String>(
+                    stream: bloc.name,
+                    builder: (context, snapshot) {
+                      return TextField(
+                        keyboardType: TextInputType.text,
+                        onChanged: (value) => bloc.changeName,
+                        decoration: InputDecoration(
+                            hintText: "Enter Name",
+                            label: const Text('Name'),
+                            errorText: snapshot.error.toString(),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(20),
+                            )),
+                      );
+                    }),
                 const SizedBox(
                   height: 30,
                 ),
-                TextField(
-                  keyboardType: TextInputType.phone,
-                  decoration: InputDecoration(
-                      hintText: "Enter Phone Number",
-                      label: const Text('Phone Number'),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(20),
-                      )),
-                ),
+                StreamBuilder<String>(
+                    stream: bloc.phoneNumber,
+                    builder: (context, snapshot) {
+                      return TextField(
+                        onChanged: (value) => bloc.changePhoneNumber,
+                        keyboardType: TextInputType.phone,
+                        decoration: InputDecoration(
+                            hintText: "Enter Phone Number",
+                            label: const Text('Phone Number'),
+                            errorText: snapshot.error.toString(),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(20),
+                            )),
+                      );
+                    }),
                 const SizedBox(
                   height: 30,
                 ),
-                TextField(
-                  keyboardType: TextInputType.emailAddress,
-                  obscureText: true,
-                  decoration: InputDecoration(
-                    hintText: "Enter Password",
-                    label: const Text('Password'),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                  ),
-                ),
+                StreamBuilder<String>(
+                    stream: bloc.password,
+                    builder: (context, snapshot) {
+                      return TextField(
+                        onChanged: (value) => bloc.changePassword,
+                        keyboardType: TextInputType.emailAddress,
+                        obscureText: isVisible,
+                        decoration: InputDecoration(
+                          hintText: "Enter Password",
+                          label: const Text('Password'),
+                          errorText: snapshot.error.toString(),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          suffixIcon: IconButton(
+                              onPressed: () {
+                                setState(() {
+                                  isVisible = !isVisible;
+                                });
+                              },
+                              icon: Icon(
+                                isVisible
+                                    ? Icons.visibility_off
+                                    : Icons.visibility,
+                              )),
+                        ),
+                      );
+                    }),
                 const SizedBox(
                   height: 30,
                 ),
-                TextField(
-                  keyboardType: TextInputType.emailAddress,
-                  obscureText: true,
-                  decoration: InputDecoration(
-                    hintText: "Confirm Password",
-                    label: const Text('Confirm Password'),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                  ),
-                ),
+                StreamBuilder<String>(
+                    stream: bloc.confirmPassword,
+                    builder: (context, snapshot) {
+                      return TextField(
+                        onChanged: (value) => bloc.changeConfirmPassword,
+                        keyboardType: TextInputType.emailAddress,
+                        obscureText: isVisible,
+                        decoration: InputDecoration(
+                          hintText: "Confirm Password",
+                          label: const Text('Confirm Password'),
+                          errorText: snapshot.error.toString(),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          suffixIcon: IconButton(
+                              onPressed: () {
+                                setState(() {
+                                  isVisible = !isVisible;
+                                });
+                              },
+                              icon: Icon(
+                                isVisible
+                                    ? Icons.visibility_off
+                                    : Icons.visibility,
+                              )),
+                        ),
+                      );
+                    }),
                 const SizedBox(
                   height: 30,
                 ),
@@ -139,27 +195,36 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   Widget _buildButton() {
-    return GestureDetector(
-      onTap: () {
-        //login here
-      },
-      child: Container(
-        alignment: Alignment.center,
-        height: 40,
-        width: 120,
-        decoration: BoxDecoration(
-          color: const Color(0xffff69b4),
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: const Text(
-          'Register',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 23,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      ),
-    );
+    final bloc = Provider.of<RegisterBloc>(context, listen: false);
+    return StreamBuilder<Object>(
+        stream: bloc.isValid,
+        builder: (context, snapshot) {
+          return GestureDetector(
+            onTap: snapshot.hasError || !snapshot.hasData
+                ? null
+                : () {
+                    bloc.submit();
+                  },
+            child: Container(
+              alignment: Alignment.center,
+              height: 40,
+              width: 120,
+              decoration: BoxDecoration(
+                color: snapshot.hasError || !snapshot.hasData
+                    ? Colors.grey
+                    : const Color(0xffff69b4),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: const Text(
+                'Register',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 23,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          );
+        });
   }
 }
